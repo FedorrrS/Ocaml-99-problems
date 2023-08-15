@@ -3,4 +3,5 @@
 ## Progress
 
 - Lists (except for 27-28)
-- Arithmetic in progress
+- Arithmetic 
+- Logic and Codes in progress
