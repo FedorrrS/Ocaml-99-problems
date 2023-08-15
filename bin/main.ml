@@ -194,3 +194,91 @@ let rec extract k list =
 (* Too hard :( 28. Sorting a List of Lists According to Length of Sublists *)
 
 (* endregion: Lists *)
+
+(* region: Arithmetic*)
+(* 29. Determine Whether a Given Integer Number Is Prime *)
+let is_prime n =
+  let rec not_divisor_of div =
+    div * div > n || (n mod div <> 0 && not_divisor_of (div + 1))
+  in
+  n <> 1 && not_divisor_of 2
+
+(* 30. Determine the Greatest Common Divisor of Two Positive Integer Numbers *)
+let rec gcd a b = if b = 0 then a else gcd b (a mod b)
+
+(* 31. Determine Whether Two Positive Integer Numbers Are Coprime *)
+let coprime a b = gcd a b = 1
+
+(* 32. Calculate Euler's Totient Function Φ(m) *)
+let phi m =
+  let rec aux counter m = function
+    | [] -> counter
+    | hd :: tl ->
+        if coprime hd m then aux (counter + 1) m tl else aux counter m tl
+  in
+
+  aux 0 m (range 1 (m - 1))
+
+(* 33. Determine the Prime Factors of a Given Positive Integer *)
+let factors n =
+  let rec aux n d =
+    if n = 1 then []
+    else if n mod d = 0 then d :: aux (n / d) d
+    else aux n (d + 1)
+  in
+  aux n 2
+
+(* 34. Determine the Prime Factors of a Given Positive Integer (2) *)
+let factors n =
+  let list = factors n in
+  List.map (fun lst -> (List.hd lst, List.length lst)) (pack list)
+
+(* 35. Calculate Euler's Totient Function Φ(m) (Improved) *)
+let phi_improved m =
+  (* wondered how it is not in std lol *)
+  let rec pow n = function
+    | 0 -> 1
+    | 1 -> n
+    | n ->
+        let b = pow n (n / 2) in
+        b * b * if n mod 2 = 0 then 1 else n
+  in
+  let rec aux mul = function
+    | [] -> mul
+    | (p, m) :: tl -> aux (mul * (p - 1) * pow p (m - 1)) tl
+  in
+  aux 1 (factors m)
+
+(* 36. Compare the Two Methods of Calculating Euler's Totient Function *)
+let timeit f n =
+  let until = Sys.time () in
+  let _ = f n in
+  let after = Sys.time () in
+  after -. until
+
+(* 37. A List of Prime Numbers *)
+let rec all_primes a b =
+  if a > b then []
+  else
+    let lst = all_primes (a + 1) b in
+    if is_prime a then a :: lst else lst
+
+(* 38. Goldbach's Conjecture *)
+let goldbach n =
+  let primes_of_n = all_primes 2 n in
+  let rec aux = function
+    | [] -> raise Exit (* dunno how to handle this *)
+    | hd :: tl -> if is_prime (n - hd) then (hd, n - hd) else aux tl
+  in
+  aux primes_of_n
+
+(* 39. A List of Goldbach Compositions *)
+let goldbach_list a b =
+  let rec aux a b =
+    if a > b then []
+    else if a mod 2 = 0 then (a, goldbach a) :: aux (a + 2) b
+    else aux (a + 1) b
+  in
+  aux (a + 1) b
+
+(* endregion: Arithmetic*)
