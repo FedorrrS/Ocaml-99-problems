@@ -2,5 +2,5 @@
 
 ## Progress
 
-- Easy 
-- Intermediate in progress
+- Lists (except for 27-28)
+- Arithmetic in progress
