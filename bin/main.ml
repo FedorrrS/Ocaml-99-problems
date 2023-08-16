@@ -282,3 +282,60 @@ let goldbach_list a b =
   aux (a + 1) b
 
 (* endregion: Arithmetic*)
+
+(* region: Logic and Codes *)
+(* 40. Truth Tables for Logical Expressions (2 Variables) done in 41 *)
+(* 41. Truth Tables for Logical Expressions *)
+type bool_expr =
+  | Var of string
+  | Not of bool_expr
+  | And of bool_expr * bool_expr
+  | Or of bool_expr * bool_expr
+
+let table variables expr =
+  let rec eval value_of_variables = function
+    | Var x ->
+        List.assoc x
+          value_of_variables (* dunno how to use pretty Jane Street maps :( )*)
+    | Not expr -> not (eval value_of_variables expr)
+    | And (expr1, expr2) ->
+        eval value_of_variables expr1 && eval value_of_variables expr2
+    | Or (expr1, expr2) ->
+        eval value_of_variables expr1 || eval value_of_variables expr2
+  in
+
+  let rec create_table value_of_variables expr = function
+    | [] -> [ (value_of_variables, eval value_of_variables expr) ]
+    | hd :: tl ->
+        create_table (value_of_variables @ [ (hd, true) ]) expr tl
+        @ create_table (value_of_variables @ [ (hd, false) ]) expr tl
+  in
+  create_table [] expr variables
+
+(* 42. Gray Code *)
+(* example for n = 3
+   n = 1: 0  -> n = 2: 00  -> n = 3: 000
+          1            01            001
+          1            11            011
+          0            10            010
+                                     110
+                                     111
+                                     101
+                                     100
+*)
+let gray n =
+  let rec gray_reflected idx list =
+    if idx < n then
+      let upper, lower =
+        List.fold_left
+          (fun (acc1, acc2) b -> (("0" ^ b) :: acc1, ("1" ^ b) :: acc2))
+          ([], []) list
+      in
+      gray_reflected (idx + 1) (List.rev_append upper lower)
+    else list
+  in
+  gray_reflected 1 [ "0"; "1" ]
+
+(* Definitely kidding me, somewhere in future.. 43. Huffman Code *)
+
+(* region: Logic and Codes *)
