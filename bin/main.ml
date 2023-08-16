@@ -338,4 +338,99 @@ let gray n =
 
 (* Definitely kidding me, somewhere in future.. 43. Huffman Code *)
 
-(* region: Logic and Codes *)
+(* endregion: Logic and Codes *)
+
+(* region: Binary Trees *)
+(* 43. Construct Completely Balanced Binary Trees *)
+type 'a binary_tree = Empty | Node of 'a * 'a binary_tree * 'a binary_tree
+
+(* Difference of nodes number of left and right subtrees is not greater than one *)
+let gen_tree l r out =
+  let rec gen_subtree out subtree =
+    List.fold_left (fun lst t -> Node ('x', subtree, t) :: lst) out r
+  in
+  List.fold_left gen_subtree out l
+
+let rec cbal_tree n =
+  if n = 0 then [ Empty ]
+  else if n mod 2 = 1 then
+    let t = cbal_tree (n / 2) in
+    gen_tree t t []
+  else
+    let tl = cbal_tree ((n / 2) - 1) in
+    let tr = cbal_tree (n / 2) in
+    gen_tree tr tl [] |> gen_tree tl tr
+
+(* 43. Symmetric Binary Trees *)
+let is_symmetric tree =
+  let rec is_mirror l r =
+    match (l, r) with
+    | Empty, Empty -> true
+    | Node (_, l1, r1), Node (_, l2, r2) -> is_mirror l1 r2 && is_mirror r1 l2
+    | _ -> false
+  in
+  match tree with Empty -> true | Node (_, l, r) -> is_mirror l r
+
+(* 44. Binary Search Trees (Dictionaries) *)
+let construct list =
+  let rec push tree value =
+    match tree with
+    | Empty -> Node (value, Empty, Empty)
+    | Node (already_in, l, r) ->
+        if value = already_in then tree
+        else if value > already_in then Node (already_in, l, push r value)
+        else Node (already_in, push l value, r)
+  in
+  List.fold_left push Empty list
+
+(* 45. Generate-and-Test Paradigm *)
+let sym_cbal_trees n = List.filter is_symmetric (cbal_tree n)
+
+(* 46. Construct Height-Balanced Binary Trees *)
+(* Height difference of left and right subtrees is not greater than one*)
+let rec hbal_tree n =
+  if n = 0 then [ Empty ]
+  else if n = 1 then [ Node ('x', Empty, Empty) ]
+  else
+    let tl = hbal_tree (n - 1) in
+    let tr = hbal_tree (n - 2) in
+    gen_tree tr tl [] |> gen_tree tl tr |> gen_tree tl tl
+
+(* For better times.. 47. Construct Height-Balanced Binary Trees With a Given Number of Nodes *)
+
+(* 48. Count the Leaves of a Binary Tree *)
+let rec count_leaves = function
+  | Empty -> 0
+  | Node (_, Empty, Empty) -> 1
+  | Node (_, l, r) -> count_leaves l + count_leaves r
+
+(* 49. Collect the Leaves of a Binary Tree in a List *)
+let leaves tree =
+  let rec aux out = function
+    | Empty -> out
+    | Node (v, Empty, Empty) -> v :: out
+    | Node (_, l, r) -> aux out l @ aux out r
+  in
+  aux [] tree
+
+(* 50. Collect the Internal Nodes of a Binary Tree in a List *)
+let internals tree =
+  let rec aux out = function
+    | Empty | Node (_, Empty, Empty) -> out
+    | Node (v, l, r) -> aux (aux (v :: out) r) l
+  in
+  aux [] tree
+
+(* 51. Collect the Nodes at a Given Level in a List *)
+let at_level tree lvl =
+  let rec aux out curr_lvl = function
+    | Empty -> out
+    | Node (v, l, r) ->
+        if curr_lvl = lvl then v :: out
+        else aux out (curr_lvl + 1) l @ aux out (curr_lvl + 1) r
+  in
+  aux [] 1 tree
+
+(* Hardy.. 52. Construct a Complete Binary Tree *)
+
+(* endregion: Binary Trees *)
