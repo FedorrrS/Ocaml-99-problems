@@ -4,4 +4,5 @@
 
 - Lists (except for 27-28)
 - Arithmetic 
-- Logic and Codes in progress
+- Logic and Codes (except for Huffman) 
+- Binary Trees in progress
